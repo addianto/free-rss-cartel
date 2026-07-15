@@ -1,8 +1,8 @@
 # Free RSS Cartel
 
-A proxy via Cloudflare to get around geoblocking of an RSS feed I subscribe to.
+An RSS feed proxy via Cloudflare to get around geoblocking for a certain RSS feed I subscribe to.
 
-## Why
+## Why?
 
 As described above, plus:
 
@@ -13,4 +13,4 @@ As described above, plus:
 
 ## License
 
-[MIT](./MIT).
+[MIT](./LICENSE).
