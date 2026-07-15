@@ -1,7 +1,10 @@
 {
 	"dependencies": {
-		"elysia": "^1.4.29",
 		"@sinclair/typebox": "^0.34.52",
+		"elysia": "^1.4.29",
 		"openapi-types": "^12.1.3"
+	},
+	"devDependencies": {
+		"wrangler": "^4.110.0"
 	}
 }
