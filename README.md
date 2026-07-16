@@ -13,6 +13,8 @@ As described above, plus:
 
 ## Setup
 
+_Notes: SOON ™️ But, for now, disable telemetry to Cloudflare_
+
 1. Disable Wrangler telemetry:
    ```shell
    pnpm exec wrangler telemetry disable
