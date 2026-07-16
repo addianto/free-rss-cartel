@@ -4,15 +4,22 @@ import { env } from 'cloudflare:workers';
 
 export default new Elysia({
 	adapter: CloudflareAdapter,
-	aot: false,
 })
 	.get(
 		'/',
 		async ({ query }) => {
-			const expectedAuthorizationKey = env.AUTHORIZATION_KEY;
-			const response = await fetch(query.url, {
+			const givenAuthorizationKey = query.authKey ?? '';
+			const expectedAuthorizationKey = env.AUTH_KEY;
+			const cleanUrl = query.quotedUrl.replace(/['"]+/g, '');
+
+			if (givenAuthorizationKey !== expectedAuthorizationKey) {
+				return new Response('Forbidden', { status: 403 });
+			}
+
+			const response = await fetch(cleanUrl, {
 				method: 'GET',
 				headers: {
+					'Content-Type': 'application/rss+xml',
 					'User-Agent':
 						'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
 				},
@@ -22,10 +29,9 @@ export default new Elysia({
 		},
 		{
 			query: t.Object({
-				url: t.String(),
+				quotedUrl: t.String(),
+				authKey: t.MaybeEmpty(t.String()),
 			}),
 		},
 	)
-	// According to https://elysiajs.com/integrations/cloudflare-worker.html,
-	// this is required to make Elysia work on Cloudflare Worker.
 	.compile();
