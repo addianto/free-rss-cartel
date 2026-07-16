@@ -4,6 +4,7 @@ import { env } from 'cloudflare:workers';
 
 export default new Elysia({
 	adapter: CloudflareAdapter,
+	aot: false,
 })
 	.get(
 		'/',
@@ -25,4 +26,6 @@ export default new Elysia({
 			}),
 		},
 	)
+	// According to https://elysiajs.com/integrations/cloudflare-worker.html,
+	// this is required to make Elysia work on Cloudflare Worker.
 	.compile();
