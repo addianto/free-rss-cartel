@@ -20,6 +20,12 @@ _Notes: SOON ™️ But, for now, disable telemetry to Cloudflare_
    pnpm exec wrangler telemetry disable
    ```
 
+Do not forget to run `wrangler types` after making changes to `.env` or [`wrangler.jsonc`](./wrangler.jsonc):
+
+```shell
+pnpm exec wrangler types
+```
+
 ## License
 
 [MIT](./LICENSE).
