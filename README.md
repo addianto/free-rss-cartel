@@ -11,6 +11,13 @@ As described above, plus:
 2. ElysiaJS name seems inspired from Blue Archive, e.g., "Eden Treaty" component in the framework.
    So, I figure I could pick a name from the universe as well. Free Trade Cartel -> Free RSS Cartel.
 
+## Setup
+
+1. Disable Wrangler telemetry:
+   ```shell
+   pnpm exec wrangler telemetry disable
+   ```
+
 ## License
 
 [MIT](./LICENSE).
