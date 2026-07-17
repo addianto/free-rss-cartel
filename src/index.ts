@@ -2,6 +2,22 @@ import { Elysia, t } from 'elysia';
 import { CloudflareAdapter } from 'elysia/adapter/cloudflare-worker';
 import { env } from 'cloudflare:workers';
 
+const createUrl = (urlString: string): URL | null => {
+	try {
+		const url = new URL(urlString);
+		return url;
+	} catch (error) {
+		console.error(`Error creating URL from string: ${urlString}`, error);
+		return null;
+	}
+};
+
+const isAllowedHostname = (hostname: string): boolean => {
+	const allowedHostnames = env.ALLOWED_HOSTNAMES?.split(',').map((h) => h.trim()) || [];
+
+	return allowedHostnames.length === 0 ? true : allowedHostnames.includes(hostname);
+};
+
 export default new Elysia({
 	adapter: CloudflareAdapter,
 })
@@ -11,9 +27,18 @@ export default new Elysia({
 			const givenAuthorizationKey = query.authKey ?? '';
 			const expectedAuthorizationKey = env.AUTH_KEY;
 			const cleanUrl = query.quotedUrl.replace(/['"]+/g, '');
+			const url = createUrl(cleanUrl);
+
+			if (!url || url.protocol !== 'https:') {
+				return new Response('Invalid URL', { status: 400 });
+			}
 
 			if (givenAuthorizationKey !== expectedAuthorizationKey) {
-				return new Response('Forbidden', { status: 403 });
+				return new Response('Forbidden: Invalid authorization key', { status: 403 });
+			}
+
+			if (!isAllowedHostname(url.hostname)) {
+				return new Response('Forbidden: Hostname not allowed', { status: 403 });
 			}
 
 			const response = await fetch(cleanUrl, {
