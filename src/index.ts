@@ -2,6 +2,16 @@ import { Elysia, t } from 'elysia';
 import { CloudflareAdapter } from 'elysia/adapter/cloudflare-worker';
 import { env } from 'cloudflare:workers';
 
+const createUrl = (urlString: string): URL | null => {
+	try {
+		const url = new URL(urlString);
+		return url;
+	} catch (error) {
+		console.error(`Error creating URL from string: ${urlString}`, error);
+		return null;
+	}
+};
+
 export default new Elysia({
 	adapter: CloudflareAdapter,
 })
@@ -11,6 +21,11 @@ export default new Elysia({
 			const givenAuthorizationKey = query.authKey ?? '';
 			const expectedAuthorizationKey = env.AUTH_KEY;
 			const cleanUrl = query.quotedUrl.replace(/['"]+/g, '');
+			const url = createUrl(cleanUrl);
+
+			if (!url || url.protocol === 'https:') {
+				return new Response('Invalid URL', { status: 400 });
+			}
 
 			if (givenAuthorizationKey !== expectedAuthorizationKey) {
 				return new Response('Forbidden', { status: 403 });
