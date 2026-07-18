@@ -23,7 +23,7 @@ export default new Elysia({
 })
 	.get(
 		'/',
-		async ({ query }) => {
+		async ({ set, query }) => {
 			const givenAuthorizationKey = query.authKey ?? '';
 			const expectedAuthorizationKey = env.AUTH_KEY;
 			const cleanUrl = query.quotedUrl.replace(/['"]+/g, '');
@@ -49,8 +49,11 @@ export default new Elysia({
 						'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
 				},
 			});
-			const data = await response.text();
-			return data;
+
+			set.headers['content-type'] = response.headers.get('content-type') ?? 'application/rss+xml; charset=utf-8';
+			set.status = response.status;
+
+			return response.body;
 		},
 		{
 			query: t.Object({
