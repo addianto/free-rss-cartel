@@ -44,7 +44,7 @@ export default new Elysia({
 			const response = await fetch(cleanUrl, {
 				method: 'GET',
 				headers: {
-					'Content-Type': 'application/rss+xml',
+					Accept: 'application/rss+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.5',
 					'User-Agent':
 						'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
 				},
