@@ -26,8 +26,7 @@ export default new Elysia({
 		async ({ set, query }) => {
 			const givenAuthorizationKey = query.authKey ?? '';
 			const expectedAuthorizationKey = env.AUTH_KEY;
-			const cleanUrl = query.quotedUrl.replace(/['"]+/g, '');
-			const url = createUrl(cleanUrl);
+			const url = createUrl(query.url);
 
 			if (!url || url.protocol !== 'https:') {
 				return new Response('Invalid URL', { status: 400 });
@@ -41,7 +40,7 @@ export default new Elysia({
 				return new Response('Forbidden: Hostname not allowed', { status: 403 });
 			}
 
-			const response = await fetch(cleanUrl, {
+			const response = await fetch(url, {
 				method: 'GET',
 				headers: {
 					Accept: 'application/rss+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.5',
@@ -57,7 +56,7 @@ export default new Elysia({
 		},
 		{
 			query: t.Object({
-				quotedUrl: t.String(),
+				url: t.String(),
 				authKey: t.MaybeEmpty(t.String()),
 			}),
 		},
