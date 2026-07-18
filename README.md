@@ -28,9 +28,9 @@ pnpm exec wrangler types
 
 ## Runtime Configuration
 
-There is one environment variable and one secret required for running this worker on Cloudflare Worker:
+There is two secrets required for running this worker on Cloudflare Worker:
 
-- The `ALLOWED_HOSTNAMES` environment variable lists the domain names that can be read by the worker.
+- The `ALLOWED_HOSTNAMES` secret lists the domain names that can be read by the worker.
   If left empty, then there is no restriction of the URL that will be read by the worker.
 - The `AUTH_KEY` secret is a simple key-based authorization for ensuring only you and/or parties you give access to can use this worker.
   If left empty, then the worker will not run and terminate early.
