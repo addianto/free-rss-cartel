@@ -23,11 +23,10 @@ export default new Elysia({
 })
 	.get(
 		'/',
-		async ({ query }) => {
+		async ({ set, query }) => {
 			const givenAuthorizationKey = query.authKey ?? '';
 			const expectedAuthorizationKey = env.AUTH_KEY;
-			const cleanUrl = query.quotedUrl.replace(/['"]+/g, '');
-			const url = createUrl(cleanUrl);
+			const url = createUrl(query.url);
 
 			if (!url || url.protocol !== 'https:') {
 				return new Response('Invalid URL', { status: 400 });
@@ -41,20 +40,23 @@ export default new Elysia({
 				return new Response('Forbidden: Hostname not allowed', { status: 403 });
 			}
 
-			const response = await fetch(cleanUrl, {
+			const response = await fetch(url, {
 				method: 'GET',
 				headers: {
-					'Content-Type': 'application/rss+xml',
+					Accept: 'application/rss+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.5',
 					'User-Agent':
 						'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
 				},
 			});
-			const data = await response.text();
-			return data;
+
+			set.headers['content-type'] = response.headers.get('content-type') ?? 'application/rss+xml; charset=utf-8';
+			set.status = response.status;
+
+			return response.body;
 		},
 		{
 			query: t.Object({
-				quotedUrl: t.String(),
+				url: t.String(),
 				authKey: t.MaybeEmpty(t.String()),
 			}),
 		},
